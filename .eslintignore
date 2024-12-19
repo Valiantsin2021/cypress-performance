@@ -1,0 +1,5 @@
+allure-report/
+node_modules/
+collections
+environments
+report

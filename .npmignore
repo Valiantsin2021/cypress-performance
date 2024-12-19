@@ -1,0 +1,8 @@
+.prettierrc.json
+.prettierignore
+.eslintignore
+eslint.config.mjs
+.gitignore
+.github
+cypress
+cypress.config.js

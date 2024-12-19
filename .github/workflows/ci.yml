@@ -1,0 +1,46 @@
+name: ci
+on: push
+permissions:
+  contents: write
+jobs:
+  check-and-test:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v4
+
+      - name: Install everything 📦
+        # https://github.com/cypress-io/github-action
+        uses: cypress-io/github-action@v6
+        with:
+          runTests: false
+
+      # make sure we did not leave "it.only" accidentally
+      # https://github.com/bahmutov/stop-only
+      - name: Catch "it.only" 🫴
+        run: npm run stop-only
+
+      - name: Format and lint code ☑️
+        run: npm run check
+
+      - name: Run Cypress tests 🧪
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          browser: chrome
+  release:
+    needs: [check-and-test]
+    runs-on: ubuntu-24.04
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v4
+
+      - name: Semantic Release 🚀
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          branch: main
+          tag_format: v${version}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

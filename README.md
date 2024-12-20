@@ -1,4 +1,4 @@
-# cypress-performance [![ci](https://github.com/Valiantsin2021/cypress-performance/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Valiantsin2021/cypress-performance/actions/workflows/ci.yml) ![cypress version](https://img.shields.io/badge/cypress-13.7.0-brightgreen)
+# cypress-performance [![ci](https://github.com/Valiantsin2021/cypress-performance/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Valiantsin2021/cypress-performance/actions/workflows/ci.yml) ![cypress version](https://img.shields.io/badge/cypress-13.17.0-brightgreen)
 
 > Cypress performance plugin to measure performance of UI of the application
 

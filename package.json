@@ -1,6 +1,6 @@
 {
   "name": "cypress-performance",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cypress performance plugin to measure performance of UI of the application",
   "main": "src/commands/index.js",
   "types": "src/commands/performance.d.ts",

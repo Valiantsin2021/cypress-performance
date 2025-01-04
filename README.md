@@ -1,6 +1,22 @@
-# cypress-performance [![ci](https://github.com/Valiantsin2021/cypress-performance/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Valiantsin2021/cypress-performance/actions/workflows/ci.yml) ![cypress version](https://img.shields.io/badge/cypress-13.7.0-brightgreen)
+<p align="center">
+  <h1 align="center">cypress-performance</h1>
+</p>
+<p align="center">
+   <a href="https://github.com/Valiantsin2021/cypress-performance/tags/"><img src="https://img.shields.io/github/tag/Valiantsin2021/cypress-performance" alt="cypress-performance versions" /></a>
+   <a href="https://www.npmjs.com/package/cypress-performance"><img alt="cypress-performance available on NPM" src="https://img.shields.io/npm/dy/cypress-performance"></a>
+   <a href="http://makeapullrequest.com"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs are welcome" /></a>
+   <a href="https://github.com/Valiantsin2021/cypress-performance/issues/"><img src="https://img.shields.io/github/issues/Valiantsin2021/cypress-performance" alt="cypress-performance issues" /></a>
+   <img src="https://img.shields.io/github/stars/Valiantsin2021/cypress-performance" alt="cypress-performance stars" />
+   <img src="https://img.shields.io/github/forks/Valiantsin2021/cypress-performance" alt="cypress-performance forks" />
+   <img src="https://img.shields.io/github/license/Valiantsin2021/cypress-performance" alt="cypress-performance license" />
+   <a href="https://GitHub.com/Valiantsin2021/cypress-performance/graphs/commit-activity"><img src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" alt="cypress-performance is maintained" /></a>
+   <a href="https://github.com/Valiantsin2021/cypress-performance"><img src="https://img.shields.io/badge/Author-Valentin%20Lutchanka-blue" alt="cypress-performance author" /></a>
+   <a href="https://github.com/Valiantsin2021/cypress-performance/actions/workflows/ci.yml"><img src="https://github.com/Valiantsin2021/cypress-performance/actions/workflows/ci.yml/badge.svg?branch=main" alt="cypress-performance ci tests" /></a>
+   <a href="https://img.shields.io/badge/cypress-13.7.0-brightgreen"><img src="https://img.shields.io/badge/cypress-13.7.0-brightgreen" alt="cypress-performance cypress version" /></a>
+</p>
 
-> Cypress performance plugin to measure performance of UI of the application
+---
+
 
 ## Concept
 
@@ -17,7 +33,7 @@ Both plugins focus on performance testing, but they serve different purposes:
 - **Real-time metrics** during test execution
 - **Lower overhead** - no need for separate Lighthouse runs
 - **Less configuration** - minimal setup required for basic usage
-- **Specific metric focus** - [Core Web Vitals](https://www.hostinger.com/tutorials/core-web-vitals) and key timings
+- **Specific metric focus** - [Core Web Vitals](https://www.hostinger.com/tutorials/core--web-vitals) and key timings
 - **Test integration** - natural fit in existing test flows
 - **Retry capability** - built-in retriability mechanisms to ensure the metrics are collected
 - **Resource timing** - detailed resource-level metrics

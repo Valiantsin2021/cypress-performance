@@ -12,6 +12,18 @@ describe('Performance with one unified command', () => {
       expect(metrics.domCompleteTiming).to.be.lessThan(2000)
     })
   })
+  it(`Should load ${url} page with timeToFirstByte less than 500ms`, () => {
+    cy.visit(url)
+    cy.performance({ retryTimeout: 1000 }).then((metrics) => {
+      cy.log(`Time to first byte: ${metrics.timeToFirstByte.total}ms`)
+      expect(metrics.timeToFirstByte.total, 'Time to first byte is less than 500ms').to.be.lessThan(500)
+      expect(metrics.timeToFirstByte.dns, 'DNS time is less than 20ms').to.be.lessThan(20)
+      expect(metrics.timeToFirstByte.wait, 'Wait time is less than 50ms').to.be.lessThan(50)
+      expect(metrics.timeToFirstByte.redirect, 'Redirect time is less than 50ms').to.be.lessThan(50)
+      expect(metrics.timeToFirstByte.tls, 'TLS time is less than 50ms').to.be.lessThan(50)
+      expect(metrics.timeToFirstByte.connection, 'Connection time is less than 50ms').to.be.lessThan(50)
+    })
+  })
   it(`Should load ${url} page with resourceTiming less than 500ms`, () => {
     cy.visit(url)
     cy.performance({ retryTimeout: 1000 }).then((metrics) => {
@@ -21,7 +33,7 @@ describe('Performance with one unified command', () => {
   })
   it(`Should load ${url} page with size less than 1.5 MB`, () => {
     cy.visit(url)
-    cy.performance({endMark: 'domComplete', timeout: 2000}).then((results) => {
+    cy.performance({ endMark: 'domComplete', timeout: 2000 }).then((results) => {
       cy.log(`Total bytes: ${results.totalBytes} bytes`)
       expect(results.totalBytes, 'Total bytes is less than 1.5 MB').to.be.lessThan(1024 * 1024 * 1.5)
     })
@@ -41,7 +53,7 @@ describe('Performance with one unified command', () => {
       cy.log(`Largest Contentful Paint timing: ${results.largestContentfulPaint}ms`)
       expect(
         results.largestContentfulPaint,
-        `Largest Contentful Paint (${results.largestContentfulPaint}ms) should be less than 500ms`
+        `Largest Contentful Paint (${results.largestContentfulPaint}ms) should be less than 500ms`,
       ).to.be.lessThan(500)
     })
   })
@@ -51,7 +63,7 @@ describe('Performance with one unified command', () => {
       cy.log(`Cumulative Layout Shift: ${results.cumulativeLayoutShift}`)
       expect(
         results.cumulativeLayoutShift,
-        `Cumulative Layout Shift (${results.cumulativeLayoutShift}) should be less than 0.1`
+        `Cumulative Layout Shift (${results.cumulativeLayoutShift}) should be less than 0.1`,
       ).to.be.lessThan(0.1)
     })
   })
@@ -61,7 +73,7 @@ describe('Performance with one unified command', () => {
       cy.log(`Total Blocking Time: ${results.totalBlockingTime}ms`)
       expect(
         results.totalBlockingTime,
-        `Total Blocking Time (${results.totalBlockingTime}ms) should be less than 500ms`
+        `Total Blocking Time (${results.totalBlockingTime}ms) should be less than 500ms`,
       ).to.be.lessThan(500)
     })
   })

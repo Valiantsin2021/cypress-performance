@@ -18,6 +18,9 @@ declare namespace Cypress {
      *   expect(results.paint.firstContentfulPaint).to.be.lessThan(500);
      *   expect(results.paint.firstPaint).to.be.lessThan(500);
      *   expect(results.cumulativeLayoutShift).to.be.lessThan(0.1);
+     *   expect(results.timeToFirstByte.total).to.be.lessThan(100)
+     *   expect(results.timeToFirstByte.dns).to.be.lessThan(20)
+     *   expect(results.timeToFirstByte.wait).to.be.lessThan(50)
      * });
      */
     performance(options?: {
@@ -33,6 +36,14 @@ declare namespace Cypress {
       largestContentfulPaint: number
       totalBlockingTime: number
       paint: { firstContentfulPaint: number; firstPaint: number }
+      timeToFirstByte: {
+        total: number
+        redirect: number
+        dns: number
+        connection: number
+        tls: number
+        wait: number
+      }
       cumulativeLayoutShift: number
       totalBytes: number
     }>

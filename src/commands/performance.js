@@ -18,6 +18,9 @@
  *   expect(results.paint.firstContentfulPaint).to.be.lessThan(500)
  *   expect(results.paint.firstPaint).to.be.lessThan(500)
  *   expect(results.cumulativeLayoutShift).to.be.lessThan(0.1)
+ *   expect(results.timeToFirstByte.total).to.be.lessThan(100)
+ *   expect(results.timeToFirstByte.dns).to.be.lessThan(20)
+ *   expect(results.timeToFirstByte.wait).to.be.lessThan(50)
  * })
  */
 Cypress.Commands.add('performance', (options = {}) => {
@@ -30,16 +33,16 @@ Cypress.Commands.add('performance', (options = {}) => {
     consoleProps() {
       return {
         command: 'performance',
-        yielded: metrics
+        yielded: metrics,
       }
-    }
+    },
   })
   const {
     startMark = 'navigationStart',
     endMark = 'loadEventEnd',
     timeout = 10000,
     initialDelay = 1000,
-    retryTimeout = 5000
+    retryTimeout = 5000,
   } = options
   const results = {}
   const hasValidMetrics = (results) =>
@@ -51,11 +54,24 @@ Cypress.Commands.add('performance', (options = {}) => {
     .then(() => {
       cy.window(logFalse)
         .then((win) => {
-          const navigationTiming = win.performance.getEntriesByType('navigation')
+          const navigationTiming = win.performance.getEntriesByType('navigation')[0]
+          if (navigationTiming) {
+            results.timeToFirstByte = {
+              total: navigationTiming.responseStart - navigationTiming.startTime,
+              redirect: navigationTiming.redirectEnd - navigationTiming.redirectStart,
+              dns: navigationTiming.domainLookupEnd - navigationTiming.domainLookupStart,
+              connection: navigationTiming.connectEnd - navigationTiming.connectStart,
+              tls:
+                navigationTiming.secureConnectionStart > 0
+                  ? navigationTiming.connectEnd - navigationTiming.secureConnectionStart
+                  : 0,
+              wait: navigationTiming.responseStart - navigationTiming.requestStart,
+            }
+          }
           const resourceTiming = (resource) =>
             win.performance.getEntriesByType('resource').find((entry) => entry.name.includes(resource))
           results.pageloadTiming = win.performance.timing[endMark] - win.performance.timing[startMark]
-          results.domCompleteTiming = navigationTiming[0]?.domComplete || null
+          results.domCompleteTiming = navigationTiming?.domComplete || null
           results.resourceTiming = resourceTiming
           results.totalBytes = win.performance
             .getEntriesByType('resource')
@@ -89,7 +105,7 @@ Cypress.Commands.add('performance', (options = {}) => {
                   } else if (type === 'paint') {
                     results.paint = {
                       firstPaint: entries.find((entry) => entry.name === 'first-paint').startTime,
-                      firstContentfulPaint: entries.find((entry) => entry.name === 'first-contentful-paint').startTime
+                      firstContentfulPaint: entries.find((entry) => entry.name === 'first-contentful-paint').startTime,
                     }
                   } else if (type === 'layout-shift') {
                     let CLS = 0
@@ -116,7 +132,7 @@ Cypress.Commands.add('performance', (options = {}) => {
                 clearTimeout(timeoutId)
                 reject(new Error(`Failed to observe ${entryTypes}: ${err.message}`))
               }
-            })
+            }),
         )
     })
     .then((initialResults) =>
@@ -127,6 +143,6 @@ Cypress.Commands.add('performance', (options = {}) => {
             throw new Error('Waiting for valid metrics...')
           }
         })
-        .then(() => initialResults)
+        .then(() => initialResults),
     )
 })

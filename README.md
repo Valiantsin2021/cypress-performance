@@ -1,5 +1,4 @@
-<p align="center"> ![cypress version](https://img.shields.io/badge/cypress-13.17.0-brightgreen)
-  <h1 align="center">cypress-performance</h1>
+<h1 align="center">cypress-performance</h1>
 </p>
 <p align="center">
    <a href="https://github.com/Valiantsin2021/cypress-performance/tags/"><img src="https://img.shields.io/github/tag/Valiantsin2021/cypress-performance" alt="cypress-performance versions" /></a>

@@ -1,4 +1,4 @@
-<p align="center">
+<p align="center"> ![cypress version](https://img.shields.io/badge/cypress-13.17.0-brightgreen)
   <h1 align="center">cypress-performance</h1>
 </p>
 <p align="center">

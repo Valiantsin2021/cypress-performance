@@ -37,6 +37,7 @@ Both plugins focus on performance testing, but they serve different purposes:
 - **Retry capability** - built-in retriability mechanisms to ensure the metrics are collected
 - **Resource timing** - detailed resource-level metrics
 - **Total bytes** - size of all resources
+- **Time to first byte** - detailed time to first byte metrics
 
 **@cypress-audit/lighthouse**
 
@@ -68,6 +69,14 @@ The command provided by the plugin is chainable and returns the object containin
       paint: { firstContentfulPaint: number; firstPaint: number }
       cumulativeLayoutShift: number
       totalBytes: number
+      timeToFirstByte: {
+        total: number
+        redirect: number
+        dns: number
+        connection: number
+        tls: number
+        wait: number
+      }
     }
 ```
 
@@ -84,6 +93,12 @@ The command provided by the plugin is chainable and returns the object containin
 | domCompleteTiming | Time until DOM is fully loaded | < 2500ms |
 | resourceTiming | Time until resource is fully loaded | < 500ms |
 | totalBytes | Size of all resources | < 1.5 MB |
+| timeToFirstByte.total | Time to first byte | < 500ms |
+| timeToFirstByte.dns | DNS time | < 20ms |
+| timeToFirstByte.wait | Wait time | < 50ms |
+| timeToFirstByte.redirect | Redirect time | < 50ms |
+| timeToFirstByte.tls | TLS time | < 50ms |
+| timeToFirstByte.connection | Connection time | < 50ms |
 
 ## Install
 
@@ -140,6 +155,12 @@ Usage example:
        expect(results.paint.firstContentfulPaint).to.be.lessThan(500);
        expect(results.paint.firstPaint).to.be.lessThan(500);
        expect(results.cumulativeLayoutShift).to.be.lessThan(0.1);
+       expect(metrics.timeToFirstByte.total, 'Time to first byte is less than 500ms').to.be.lessThan(500);
+       expect(metrics.timeToFirstByte.dns, 'DNS time is less than 20ms').to.be.lessThan(20);
+       expect(metrics.timeToFirstByte.wait, 'Wait time is less than 50ms').to.be.lessThan(50);
+       expect(metrics.timeToFirstByte.redirect, 'Redirect time is less than 50ms').to.be.lessThan(50);
+       expect(metrics.timeToFirstByte.tls, 'TLS time is less than 50ms').to.be.lessThan(50);
+       expect(metrics.timeToFirstByte.connection, 'Connection time is less than 50ms').to.be.lessThan(50);
      });
 ```
 

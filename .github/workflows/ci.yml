@@ -28,6 +28,13 @@ jobs:
         with:
           install: false
           browser: chrome
+
+      - name: Upload Cypress artifacts 📦
+        uses: actions/upload-artifact@v4
+        with:
+          name: results.json
+          path: results.json
+          retention-days: 5
   release:
     needs: [check-and-test]
     runs-on: ubuntu-24.04

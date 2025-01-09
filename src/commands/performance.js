@@ -33,16 +33,16 @@ Cypress.Commands.add('performance', (options = {}) => {
     consoleProps() {
       return {
         command: 'performance',
-        yielded: metrics,
+        yielded: metrics
       }
-    },
+    }
   })
   const {
     startMark = 'navigationStart',
     endMark = 'loadEventEnd',
     timeout = 10000,
     initialDelay = 1000,
-    retryTimeout = 5000,
+    retryTimeout = 5000
   } = options
   const results = {}
   const hasValidMetrics = (results) =>
@@ -56,6 +56,30 @@ Cypress.Commands.add('performance', (options = {}) => {
         .then((win) => {
           const navigationTiming = win.performance.getEntriesByType('navigation')[0]
           if (navigationTiming) {
+            Cypress.log({
+              name: 'Time to first byte: total',
+              message: `Start: ${navigationTiming.startTime} End: ${navigationTiming.responseStart} Duration: ${navigationTiming.responseStart - navigationTiming.startTime}ms`
+            })
+            Cypress.log({
+              name: 'Time to first byte: connection',
+              message: `Start: ${navigationTiming.connectStart} End: ${navigationTiming.connectEnd} Duration: ${navigationTiming.connectEnd - navigationTiming.connectStart}ms`
+            })
+            Cypress.log({
+              name: 'Time to first byte: redirect',
+              message: `Start: ${navigationTiming.redirectStart} End: ${navigationTiming.redirectEnd} Duration: ${navigationTiming.redirectEnd - navigationTiming.redirectStart}ms`
+            })
+            Cypress.log({
+              name: 'Time to first byte: dns',
+              message: `Start: ${navigationTiming.domainLookupStart} End: ${navigationTiming.domainLookupEnd} Duration: ${navigationTiming.domainLookupEnd - navigationTiming.domainLookupStart}ms`
+            })
+            Cypress.log({
+              name: 'Time to first byte: tls',
+              message: `Start: ${navigationTiming.secureConnectionStart} End: ${navigationTiming.connectEnd} Duration: ${navigationTiming.connectEnd - navigationTiming.secureConnectionStart}ms`
+            })
+            Cypress.log({
+              name: 'Time to first byte: wait',
+              message: `Start: ${navigationTiming.requestStart} End: ${navigationTiming.responseStart} Duration: ${navigationTiming.responseStart - navigationTiming.requestStart}ms`
+            })
             results.timeToFirstByte = {
               total: navigationTiming.responseStart - navigationTiming.startTime,
               redirect: navigationTiming.redirectEnd - navigationTiming.redirectStart,
@@ -65,11 +89,23 @@ Cypress.Commands.add('performance', (options = {}) => {
                 navigationTiming.secureConnectionStart > 0
                   ? navigationTiming.connectEnd - navigationTiming.secureConnectionStart
                   : 0,
-              wait: navigationTiming.responseStart - navigationTiming.requestStart,
+              wait: navigationTiming.responseStart - navigationTiming.requestStart
             }
           }
           const resourceTiming = (resource) =>
             win.performance.getEntriesByType('resource').find((entry) => entry.name.includes(resource))
+          Cypress.log({
+            name: 'Page Load Timing: total',
+            message: `Start: ${win.performance.timing[startMark]} End: ${win.performance.timing[endMark]} Duration: ${win.performance.timing[endMark] - win.performance.timing[startMark]}ms`
+          })
+          Cypress.log({
+            name: 'Dom Complete Timing',
+            message: `Duration: ${navigationTiming?.domComplete}ms`
+          })
+          Cypress.log({
+            name: 'Total Bytes',
+            message: `Total bytes: ${win.performance.getEntriesByType('resource').reduce((acc, entry) => acc + entry.encodedBodySize, 0)}bytes`
+          })
           results.pageloadTiming = win.performance.timing[endMark] - win.performance.timing[startMark]
           results.domCompleteTiming = navigationTiming?.domComplete || null
           results.resourceTiming = resourceTiming
@@ -94,6 +130,10 @@ Cypress.Commands.add('performance', (options = {}) => {
                 for (const type of entryTypes) {
                   const entries = list.getEntriesByType(type)
                   if (type === 'largest-contentful-paint') {
+                    Cypress.log({
+                      name: 'Largest Contentful Paint Timing',
+                      message: `Duration: ${entries[entries.length - 1].duration}ms`
+                    })
                     results.largestContentfulPaint = entries[entries.length - 1].startTime
                   } else if (type === 'longtask') {
                     let totalBlockingTime = 0
@@ -101,11 +141,23 @@ Cypress.Commands.add('performance', (options = {}) => {
                       const blockingTime = Math.max(perfEntry.duration - 50, 0)
                       totalBlockingTime += blockingTime
                     })
+                    Cypress.log({
+                      name: 'Total Blocking Time',
+                      message: `Duration: ${totalBlockingTime}ms`
+                    })
                     results.totalBlockingTime = totalBlockingTime
                   } else if (type === 'paint') {
+                    Cypress.log({
+                      name: 'First Paint',
+                      message: `Duration: ${entries.find((entry) => entry.name === 'first-paint').startTime}ms`
+                    })
+                    Cypress.log({
+                      name: 'First Contentful Paint',
+                      message: `Duration: ${entries.find((entry) => entry.name === 'first-contentful-paint').startTime}ms`
+                    })
                     results.paint = {
                       firstPaint: entries.find((entry) => entry.name === 'first-paint').startTime,
-                      firstContentfulPaint: entries.find((entry) => entry.name === 'first-contentful-paint').startTime,
+                      firstContentfulPaint: entries.find((entry) => entry.name === 'first-contentful-paint').startTime
                     }
                   } else if (type === 'layout-shift') {
                     let CLS = 0
@@ -113,6 +165,10 @@ Cypress.Commands.add('performance', (options = {}) => {
                       if (!entry.hadRecentInput) {
                         CLS += entry.value
                       }
+                    })
+                    Cypress.log({
+                      name: 'Cumulative Layout Shift',
+                      message: `Duration: ${CLS}`
                     })
                     results.cumulativeLayoutShift = CLS
                   }
@@ -132,17 +188,17 @@ Cypress.Commands.add('performance', (options = {}) => {
                 clearTimeout(timeoutId)
                 reject(new Error(`Failed to observe ${entryTypes}: ${err.message}`))
               }
-            }),
+            })
         )
     })
     .then((initialResults) =>
       cy
-        .wrap(null, { timeout: retryTimeout })
+        .wrap(null, { timeout: retryTimeout, log: false })
         .should(() => {
           if (!hasValidMetrics(initialResults)) {
             throw new Error('Waiting for valid metrics...')
           }
         })
-        .then(() => initialResults),
+        .then(() => initialResults)
     )
 })

@@ -102,6 +102,10 @@ The command provided by the plugin is chainable and returns the object containin
 
 ## Install
 
+First things first, there's always something before you can start.
+
+To make our life easier, we use NPM a lot. Make sure you have it installed.
+
 Add this package as a dev dependency:
 
 ```sh
@@ -138,6 +142,7 @@ Usage example:
 
 ```js
      // with custom options values
+     cy.visit('https://example.com');
      cy.performance({ startMark: 'navigationStart', endMark: 'loadEventEnd', timeout: 10000, initialDelay: 1000, retryTimeout: 5000 })
        .then(results => {
          expect(results.pageloadTiming).to.be.lessThan(2000);
@@ -149,7 +154,7 @@ Usage example:
 
     // or with default options values
 
-     cy.performance().then(results => {
+     cy.visit('https://example.com').performance().then(results => { // the command is chainable
        expect(results.largestContentfulPaint).to.be.lessThan(500);
        expect(results.totalBlockingTime).to.be.lessThan(500);
        expect(results.paint.firstContentfulPaint).to.be.lessThan(500);

@@ -1,6 +1,82 @@
 /// <reference types="cypress" />
 
 /**
+ * Set network conditions using Chrome DevTools Protocol
+ * @example
+ * cy.setNetworkConditions('SLOW_3G')
+ * @example
+ * cy.setNetworkConditions({
+ *   downloadThroughput: 32768, // 32KB/s
+ *   uploadThroughput: 16384,   // 16KB/s
+ *   latency: 200              // 200ms
+ * })
+ */
+Cypress.Commands.add('setNetworkConditions', (preset) => {
+  const presets = {
+    REGULAR_4G: {
+      offline: false,
+      downloadThroughput: (4 * 1024 * 1024) / 8, // 4 Mbps
+      uploadThroughput: (3 * 1024 * 1024) / 8, // 3 Mbps
+      latency: 20 // ms
+    },
+    SLOW_3G: {
+      offline: false,
+      downloadThroughput: (500 * 1024) / 8, // 500 Kbps
+      uploadThroughput: (500 * 1024) / 8, // 500 Kbps
+      latency: 100 // ms
+    },
+    FAST_3G: {
+      offline: false,
+      downloadThroughput: (1.5 * 1024 * 1024) / 8, // 1.5 Mbps
+      uploadThroughput: (750 * 1024) / 8, // 750 Kbps
+      latency: 150
+    },
+    FAST_WIFI: {
+      offline: false,
+      downloadThroughput: (400 * 1024 * 1024) / 8, // 400 Mbps
+      uploadThroughput: (200 * 1024 * 1024) / 8, // 200 Mbps
+      latency: 2 // ms
+    }
+  }
+
+  const conditions = typeof preset === 'string' ? presets[preset] : preset
+
+  if (!conditions) {
+    throw new Error(`Unknown network preset: ${preset}`)
+  }
+
+  Cypress.automation('remote:debugger:protocol', {
+    command: 'Network.enable'
+  })
+  Cypress.automation('remote:debugger:protocol', {
+    command: 'Network.emulateNetworkConditions',
+    params: {
+      offline: false,
+      latency: conditions.latency,
+      downloadThroughput: conditions.downloadThroughput,
+      uploadThroughput: conditions.uploadThroughput
+    }
+  })
+})
+
+/**
+ * Reset network conditions to default
+ */
+Cypress.Commands.add('resetNetworkConditions', () => {
+  Cypress.automation('remote:debugger:protocol', {
+    command: 'Network.emulateNetworkConditions',
+    params: {
+      offline: false,
+      latency: 0,
+      downloadThroughput: -1,
+      uploadThroughput: -1
+    }
+  })
+  Cypress.automation('remote:debugger:protocol', {
+    command: 'Network.disable'
+  })
+})
+/**
  * Unified command to get performance metrics or observe specific performance metrics
  * @example
  * cy.performance({ startMark: 'navigationStart', endMark: 'loadEventEnd', timeout: 10000, initialDelay: 1000, retryTimeout: 5000 })
@@ -12,6 +88,8 @@
  *     expect(results.totalBytes, 'Total bytes is less than 500kb').to.be.lessThan(500000)
  *   })
  * @example
+ * cy.setNetworkConditions('SLOW_3G')
+ * cy.visit('https://www.google.com')
  * cy.performance().then(results => {
  *   expect(results.largestContentfulPaint).to.be.lessThan(500)
  *   expect(results.totalBlockingTime).to.be.lessThan(500)
@@ -22,6 +100,7 @@
  *   expect(results.timeToFirstByte.dns).to.be.lessThan(20)
  *   expect(results.timeToFirstByte.wait).to.be.lessThan(50)
  * })
+ * cy.resetNetworkConditions()
  */
 Cypress.Commands.add('performance', (options = {}) => {
   const logFalse = { log: false }
@@ -37,6 +116,7 @@ Cypress.Commands.add('performance', (options = {}) => {
       }
     }
   })
+
   const {
     startMark = 'navigationStart',
     endMark = 'loadEventEnd',

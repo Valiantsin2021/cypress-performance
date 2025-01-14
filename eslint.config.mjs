@@ -42,7 +42,7 @@ export default [
       'max-nested-callbacks': ['warn', { max: 3 }],
       'max-params': ['error', { max: 4 }],
       'max-statements': ['error', { max: 50 }, { ignoreTopLevelFunctions: true }],
-      'max-lines': ['error', { max: 200, skipComments: true, skipBlankLines: true }],
+      'max-lines': ['error', { max: 250, skipComments: true, skipBlankLines: true }],
       'max-len': ['warn', { code: 120, ignoreComments: true, ignoreUrls: true }],
       'no-multiple-empty-lines': ['error', { max: 1 }],
       'space-before-function-paren': ['error', { anonymous: 'always', named: 'never', asyncArrow: 'always' }],

@@ -1,5 +1,40 @@
+interface NetworkConditions {
+  offline: boolean
+  downloadThroughput: number // bits per second
+  uploadThroughput: number // bits per second
+  latency: number // milliseconds
+}
+
+interface NetworkPreset {
+  REGULAR_4G: NetworkConditions
+  SLOW_3G: NetworkConditions
+  FAST_3G: NetworkConditions
+  FAST_WIFI: NetworkConditions
+}
+
+interface SetNetworkConditionsOptions {
+  downloadThroughput: number // bits per second
+  uploadThroughput: number // bits per second
+  latency: number // milliseconds
+}
 declare namespace Cypress {
   interface Chainable {
+    /**
+     * Set network conditions using Chrome DevTools Protocol
+     * @example
+     * cy.setNetworkConditions('SLOW_3G')
+     * @example
+     * cy.setNetworkConditions({
+     *   downloadThroughput: 32768, // 32KB/s
+     *   uploadThroughput: 16384,   // 16KB/s
+     *   latency: 200              // 200ms
+     * })
+     */
+    setNetworkConditions(preset: keyof NetworkPreset | SetNetworkConditionsOptions): Chainable
+    /**
+     * Reset network conditions to default
+     */
+    resetNetworkConditions(): Chainable
     /**
      * Unified command to get performance metrics or observe specific performance metrics.
      * @example
@@ -12,16 +47,19 @@ declare namespace Cypress {
      *     expect(results.totalBytes, 'Total bytes is less than 500kb').to.be.lessThan(500000);
      *   });
      * @example
+     * cy.setNetworkConditions('SLOW_3G')
+     * cy.visit('https://www.google.com')
      * cy.performance().then(results => {
-     *   expect(results.largestContentfulPaint).to.be.lessThan(500);
-     *   expect(results.totalBlockingTime).to.be.lessThan(500);
-     *   expect(results.paint.firstContentfulPaint).to.be.lessThan(500);
-     *   expect(results.paint.firstPaint).to.be.lessThan(500);
-     *   expect(results.cumulativeLayoutShift).to.be.lessThan(0.1);
+     *   expect(results.largestContentfulPaint).to.be.lessThan(500)
+     *   expect(results.totalBlockingTime).to.be.lessThan(500)
+     *   expect(results.paint.firstContentfulPaint).to.be.lessThan(500)
+     *   expect(results.paint.firstPaint).to.be.lessThan(500)
+     *   expect(results.cumulativeLayoutShift).to.be.lessThan(0.1)
      *   expect(results.timeToFirstByte.total).to.be.lessThan(100)
      *   expect(results.timeToFirstByte.dns).to.be.lessThan(20)
      *   expect(results.timeToFirstByte.wait).to.be.lessThan(50)
-     * });
+     * })
+     * cy.resetNetworkConditions()
      */
     performance(options?: {
       startMark?: keyof PerformanceTiming // Default: 'navigationStart'

@@ -1,5 +1,4 @@
-<h1 align="center">cypress-performance</h1> ![cypress version](https://img.shields.io/badge/cypress-13.17.0-brightgreen)
-</p>
+<h1 align="center">cypress-performance</h1>
 <p align="center">
    <a href="https://github.com/Valiantsin2021/cypress-performance/tags/"><img src="https://img.shields.io/github/tag/Valiantsin2021/cypress-performance" alt="cypress-performance versions" /></a>
    <a href="https://www.npmjs.com/package/cypress-performance"><img alt="cypress-performance available on NPM" src="https://img.shields.io/npm/dy/cypress-performance"></a>
@@ -38,6 +37,7 @@ Both plugins focus on performance testing, but they serve different purposes:
 - **Resource timing** - detailed resource-level metrics
 - **Total bytes** - size of all resources
 - **Time to first byte** - detailed time to first byte metrics
+- **Network throttling** - support for throttling network conditions with presets or custom options
 
 **@cypress-audit/lighthouse**
 
@@ -56,8 +56,9 @@ Both plugins focus on performance testing, but they serve different purposes:
 - Seamless integration with existing Cypress tests
 - Type definitions for TypeScript support
 - Configurable thresholds and timing options
+- Support for throttling network conditions with presets or custom options
 
-The command provided by the plugin is chainable and returns the object containing the collected performance metrics:
+##### The "cy.performance" command provided by the plugin is chainable and returns the object containing the collected performance metrics:
 
 ```
   PerformanceMetrics {
@@ -79,6 +80,27 @@ The command provided by the plugin is chainable and returns the object containin
       }
     }
 ```
+##### The "cy.setNetworkConditions" command provided by the plugin accepts the name of a network condition preset or custom options and applies it to the current test run.
+
+Available Presets: 
+- REGULAR_4G
+- SLOW_3G
+- FAST_3G
+- FAST_WIFI
+
+```typescript
+  cy.setNetworkConditions('FAST_WIFI');
+  // or custom options
+  cy.setNetworkConditions({
+    downloadThroughput: 32768, // 32KB/s
+    uploadThroughput: 16384,   // 16KB/s
+    latency: 200              // 200ms
+  })
+```
+
+#####  The "cy.resetNetworkConditions" command provided by the plugin resets the network conditions to their default values.
+
+This command normally should be placed at the end of the test suite or in the after hook to ensure that the network conditions are reset to their default values after each test.
 
 **Available Metrics**
 
@@ -124,9 +146,16 @@ import 'cypress-performance'
 
 **Usage**
 
-Checks the exact text match or regular expression for a single element or multiple ones
+**Known issues**
 
-Default options for the command:
+1. TimeToFirstByte is not capturing DNS, connection, and TLS times always returning 0.
+    "dns": 0,
+    "connection": 0,
+    "tls": 0,
+
+2. cy.setNetworkConditions doesn't work properly in headed mode (only the first test run with the emulated network conditions). It works fine in headless mode using ```npx cypress run``` command.
+
+Default options for the command cy.performance():
 
 ```
     MetricsOptions{
@@ -138,6 +167,27 @@ Default options for the command:
     }
 
 ```
+
+Possible options for the command cy.setNetworkConditions():
+
+Presets: 
+
+- REGULAR_4G - 4 Mbps
+- SLOW_3G - 500 Kbps
+- FAST_3G - 1.5 Mbps
+- FAST_WIFI - 400 Mbps
+
+Options:
+
+```
+NetworkConditions {
+  offline: boolean
+  downloadThroughput: number // bits per second
+  uploadThroughput: number // bits per second
+  latency: number // milliseconds
+}
+```
+
 Usage example:
 
 ```js
@@ -167,6 +217,17 @@ Usage example:
        expect(metrics.timeToFirstByte.tls, 'TLS time is less than 50ms').to.be.lessThan(50);
        expect(metrics.timeToFirstByte.connection, 'Connection time is less than 50ms').to.be.lessThan(50);
      });
+
+    it(`using preset SLOW_3G`, () => {
+      // Using setNetworkConditions should be called first before navigating to the page
+      cy.setNetworkConditions('SLOW_3G')
+      cy.visit(url)
+      cy.performance().then((metrics) => {
+        expect(metrics.pageloadTiming).to.be.greaterThan(12000)
+        expect(metrics.domCompleteTiming).to.be.greaterThan(12000)
+      })
+      cy.resetNetworkConditions()
+  })
 ```
 
 **Command Retryability**
@@ -201,10 +262,6 @@ If you are using TypeScript, include this module in your types list
   }
 }
 ```
-
-## The build process
-
-The source code is in the [src/commands](./src/commands/) folder. The build command produces ES5 code that goes into the `commands` folder (should not be checked into the source code control). The `package.json` in its NPM distribution includes `src/commands` plus the types from `src/commands/performance.d.ts` file.
 
 ## Contributions
 

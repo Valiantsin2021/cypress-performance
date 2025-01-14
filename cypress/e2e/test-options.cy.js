@@ -9,12 +9,14 @@ for (let i = 1; i < 2; i++) {
       cy.visit(url)
     })
     it(i + ` Should load ${url} page in less than 2 second`, () => {
-      cy.visit(url).performance().then((metrics) => {
-        results.push(metrics)
-        cy.task('save', metrics)
-        expect(metrics.pageloadTiming).to.be.lessThan(2000)
-        expect(metrics.domCompleteTiming).to.be.lessThan(2000)
-      })
+      cy.visit(url)
+        .performance()
+        .then((metrics) => {
+          results.push(metrics)
+          cy.task('save', metrics)
+          expect(metrics.pageloadTiming).to.be.lessThan(2000)
+          expect(metrics.domCompleteTiming).to.be.lessThan(2000)
+        })
     })
     it(i + ` Should load ${url} page with timeToFirstByte less than 500ms`, () => {
       cy.performance({ retryTimeout: 1000 }).then((metrics) => {

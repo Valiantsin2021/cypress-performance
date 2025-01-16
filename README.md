@@ -148,12 +148,9 @@ import 'cypress-performance'
 
 **Known issues**
 
-1. TimeToFirstByte is not capturing DNS, connection, and TLS times always returning 0.
-    "dns": 0,
-    "connection": 0,
-    "tls": 0,
+* It is recommended to wait for the complete page load before using the performance command.
 
-2. cy.setNetworkConditions doesn't work properly in headed mode (only the first test run with the emulated network conditions). It works fine in headless mode using ```npx cypress run``` command.
+1. cy.setNetworkConditions doesn't work properly in headed mode (only the first test run with the emulated network conditions). It works fine in headless mode using ```npx cypress run``` command.
 
 Default options for the command cy.performance():
 

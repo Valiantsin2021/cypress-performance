@@ -126,7 +126,9 @@ Cypress.Commands.add('performance', (options = {}) => {
   } = options
   const results = {}
   const hasValidMetrics = (results) =>
+    results.domCompleteTiming !== undefined &&
     results.largestContentfulPaint !== undefined &&
+    results.totalBlockingTime !== undefined &&
     results.paint?.firstContentfulPaint !== undefined &&
     results.paint?.firstPaint !== undefined
   return cy
@@ -184,7 +186,7 @@ Cypress.Commands.add('performance', (options = {}) => {
           })
           Cypress.log({
             name: 'Total Bytes',
-            message: `Total bytes: ${win.performance.getEntriesByType('resource').reduce((acc, entry) => acc + entry.encodedBodySize, 0)}bytes`
+            message: `${win.performance.getEntriesByType('resource').reduce((acc, entry) => acc + entry.encodedBodySize, 0)}bytes`
           })
           results.pageloadTiming = win.performance.timing[endMark] - win.performance.timing[startMark]
           results.domCompleteTiming = navigationTiming?.domComplete || null
@@ -209,48 +211,55 @@ Cypress.Commands.add('performance', (options = {}) => {
               const observer = new win.PerformanceObserver((list) => {
                 for (const type of entryTypes) {
                   const entries = list.getEntriesByType(type)
-                  if (type === 'largest-contentful-paint') {
-                    Cypress.log({
-                      name: 'Largest Contentful Paint Timing',
-                      message: `Duration: ${entries[entries.length - 1].duration}ms`
-                    })
-                    results.largestContentfulPaint = entries[entries.length - 1].startTime
-                  } else if (type === 'longtask') {
-                    let totalBlockingTime = 0
-                    entries.forEach((perfEntry) => {
-                      const blockingTime = Math.max(perfEntry.duration - 50, 0)
-                      totalBlockingTime += blockingTime
-                    })
-                    Cypress.log({
-                      name: 'Total Blocking Time',
-                      message: `Duration: ${totalBlockingTime}ms`
-                    })
-                    results.totalBlockingTime = totalBlockingTime
-                  } else if (type === 'paint') {
-                    Cypress.log({
-                      name: 'First Paint',
-                      message: `Duration: ${entries.find((entry) => entry.name === 'first-paint').startTime}ms`
-                    })
-                    Cypress.log({
-                      name: 'First Contentful Paint',
-                      message: `Duration: ${entries.find((entry) => entry.name === 'first-contentful-paint').startTime}ms`
-                    })
-                    results.paint = {
-                      firstPaint: entries.find((entry) => entry.name === 'first-paint').startTime,
-                      firstContentfulPaint: entries.find((entry) => entry.name === 'first-contentful-paint').startTime
-                    }
-                  } else if (type === 'layout-shift') {
-                    let CLS = 0
-                    entries.forEach((entry) => {
-                      if (!entry.hadRecentInput) {
-                        CLS += entry.value
+                  try {
+                    if (type === 'largest-contentful-paint') {
+                      Cypress.log({
+                        name: 'Largest Contentful Paint Timing',
+                        message: `Duration: ${entries[entries.length - 1]?.duration}ms`
+                      })
+                      results.largestContentfulPaint = entries[entries.length - 1].startTime
+                    } else if (type === 'longtask') {
+                      let totalBlockingTime = 0
+                      entries.forEach((perfEntry) => {
+                        const blockingTime = Math.max(perfEntry?.duration - 50, 0)
+                        totalBlockingTime += blockingTime
+                      })
+                      Cypress.log({
+                        name: 'Total Blocking Time',
+                        message: `Duration: ${totalBlockingTime}ms`
+                      })
+                      results.totalBlockingTime = totalBlockingTime
+                    } else if (type === 'paint') {
+                      Cypress.log({
+                        name: 'First Paint',
+                        message: `Duration: ${entries.find((entry) => entry.name === 'first-paint').startTime}ms`
+                      })
+                      Cypress.log({
+                        name: 'First Contentful Paint',
+                        message: `Duration: ${entries.find((entry) => entry.name === 'first-contentful-paint').startTime}ms`
+                      })
+                      results.paint = {
+                        firstPaint: entries.find((entry) => entry.name === 'first-paint').startTime,
+                        firstContentfulPaint: entries.find((entry) => entry.name === 'first-contentful-paint').startTime
                       }
-                    })
+                    } else if (type === 'layout-shift') {
+                      let CLS = 0
+                      entries.forEach((entry) => {
+                        if (!entry.hadRecentInput) {
+                          CLS += entry.value
+                        }
+                      })
+                      Cypress.log({
+                        name: 'Cumulative Layout Shift',
+                        message: `Duration: ${CLS}`
+                      })
+                      results.cumulativeLayoutShift = CLS
+                    }
+                  } catch (err) {
                     Cypress.log({
-                      name: 'Cumulative Layout Shift',
-                      message: `Duration: ${CLS}`
+                      name: type,
+                      message: err.message
                     })
-                    results.cumulativeLayoutShift = CLS
                   }
                 }
                 observer.disconnect()

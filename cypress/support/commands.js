@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 import '../../src/commands/index.js'
 /**
  * Overwrites the default `log` command to also print the message to the terminal.

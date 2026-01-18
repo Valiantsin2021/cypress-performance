@@ -1,6 +1,6 @@
 {
   "name": "cypress-performance",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Cypress performance plugin to measure performance of UI of the application",
   "main": "src/commands/index.js",
   "types": "src/commands/performance.d.ts",
@@ -14,7 +14,8 @@
     "stop-only": "stop-only --folder cypress/e2e",
     "lint": "npx eslint \"**/*.js\" --fix",
     "format": "prettier --write \"**/*.js\"",
-    "check": "npm run format && npm run lint"
+    "check": "npm run format && npm run lint",
+    "bump": "npx -y npm-check-updates -u && npm prune"
   },
   "keywords": [
     "cypress-plugin",
@@ -25,16 +26,16 @@
   "author": "Valentin Lutchanka <lutchenkovalentin@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "cypress": "^13.17.0",
-    "prettier": "^3.4.2",
-    "semantic-release": "^24.2.0",
-    "stop-only": "^3.4.2",
-    "eslint": "^9.17.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-chai-friendly": "^1.0.1",
-    "eslint-plugin-cypress": "4.1.0",
+    "cypress": "^15.9.0",
+    "prettier": "^3.8.0",
+    "semantic-release": "^25.0.2",
+    "stop-only": "^3.4.4",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-chai-friendly": "^1.1.0",
+    "eslint-plugin-cypress": "5.2.1",
     "eslint-plugin-no-only-tests": "3.3.0",
-    "eslint-plugin-prettier": "5.2.1"
+    "eslint-plugin-prettier": "5.5.5"
   },
   "peerDependencies": {
     "cypress": ">=12"

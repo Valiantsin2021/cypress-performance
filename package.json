@@ -1,6 +1,6 @@
 {
   "name": "cypress-performance",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "Cypress performance plugin to measure performance of UI of the application",
   "main": "src/commands/index.js",
   "types": "src/commands/performance.d.ts",
@@ -26,14 +26,14 @@
   "author": "Valentin Lutchanka <lutchenkovalentin@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "cypress": "^15.9.0",
-    "prettier": "^3.8.0",
-    "semantic-release": "^25.0.2",
+    "cypress": "^15.13.0",
+    "prettier": "^3.8.1",
+    "semantic-release": "^25.0.3",
     "stop-only": "^3.4.4",
-    "eslint": "^9.39.2",
+    "eslint": "^10.2.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-chai-friendly": "^1.1.0",
-    "eslint-plugin-cypress": "5.2.1",
+    "eslint-plugin-chai-friendly": "^1.2.0",
+    "eslint-plugin-cypress": "6.2.3",
     "eslint-plugin-no-only-tests": "3.3.0",
     "eslint-plugin-prettier": "5.5.5"
   },

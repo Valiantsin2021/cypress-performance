@@ -1,3 +1,9 @@
+# 1.5.4
+
+### Chore
+
+- update dependencies
+
 # 1.5.3
 
 ### Chore

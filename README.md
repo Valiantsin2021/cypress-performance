@@ -10,7 +10,7 @@
    <a href="https://GitHub.com/Valiantsin2021/cypress-performance/graphs/commit-activity"><img src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" alt="cypress-performance is maintained" /></a>
    <a href="https://github.com/Valiantsin2021/cypress-performance"><img src="https://img.shields.io/badge/Author-Valentin%20Lutchanka-blue" alt="cypress-performance author" /></a>
    <a href="https://github.com/Valiantsin2021/cypress-performance/actions/workflows/ci.yml"><img src="https://github.com/Valiantsin2021/cypress-performance/actions/workflows/ci.yml/badge.svg?branch=main" alt="cypress-performance ci tests" /></a>
-   <a href="https://img.shields.io/badge/cypress-13.7.0-brightgreen"><img src="https://img.shields.io/badge/cypress-13.7.0-brightgreen" alt="cypress-performance cypress version" /></a>
+   <a href="https://img.shields.io/badge/cypress-15.9.0-brightgreen"><img src="https://img.shields.io/badge/cypress-15.9.0-brightgreen" alt="cypress-performance cypress version" /></a>
 </p>
 
 ---
